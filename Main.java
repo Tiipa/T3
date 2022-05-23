@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.Scanner;
 
 public class Main {
@@ -10,18 +11,27 @@ public class Main {
             "XCI", "XCII", "XCIII", "XCIV", "XCV", "XCVI", "XCVII", "XCVIII", "XCIX", "C"};
     static int x = 0;
     static int y = 0;
+    private static boolean checkX;
+    private static boolean checkY;
 
     public static void main(String[] args) {
         System.out.println("Input");
         String str = new Scanner(System.in).nextLine();
         System.out.println("Output");
         String[] mass = str.split(" ");
-        if (mass.length >2 && mass.length <4) {
+        if (mass.length == 3) {
             if (checkRome(mass)) System.out.println(romeArifmetic(mass));
             else System.out.println(arabArifmetic(mass));
         }
-        else System.out.println("Формат математической операции не удовлетворяет заданию - два операнда и один оператор (+, -, /, *)");
-    }
+        if (mass.length !=3) {
+            try {
+                throw new IOException();
+            } catch (IOException e) {
+                    System.out.println("Формат математической операции не удовлетворяет заданию - два операнда и один оператор (+, -, /, *)");
+                    System.exit(0);
+                }
+            }
+        }
     static boolean checkRome(String[] mass) {
         boolean checkX = false;
         boolean checkY = false;
@@ -35,14 +45,17 @@ public class Main {
                 checkY = true;
             }
         }
-        if (checkX == true && checkY == true) {
-            if (x > 10 || y >10) {
-                System.out.println("Превышено значение операнда, введите от I до X.");
-                System.exit(1);
-            }
+        if ((checkX == true && checkY == false) || (checkX == false && checkY == true)) {
+            try { throw new NumberFormatException();
+            } catch (NumberFormatException e) {
+                System.out.println("Используются одновременно разные системы счисления.");
+                System.exit(0);}}
+        if (checkX && checkY == true) {
             return true;
-        } else return false;
+        }
+        else return false;
     }
+
     static String romeArifmetic(String[] mass) {
         String s = "";
         int c = 0;
@@ -80,36 +93,39 @@ public class Main {
                 }
                 break;
         }
-        if (c < 0) {
-            return "В римской системе нет отрицательных чисел.";
+            if (x > 10 || y >10 || x < 1 || y < 1) {
+                try {
+                    throw new IOException();
+                } catch (IOException e) {
+                    System.out.println("Не корректное значение операнда, введите от I до X.");}
+                System.exit(0);
+            }
+        if (c<1) {
+            try {
+                throw new IOException();
+            } catch (IOException e) {
+                System.out.println("В Римской системе не отрицательных чисел и 0.");}
+            System.exit(0);
         }
             return s;
     }
-    static  String arabArifmetic(String[] mass) {
-        try {
+    static  String arabArifmetic(String[] mass)  {
             String otvet = "";
             x = Integer.parseInt(mass[0]);
             y = Integer.parseInt(mass[2]);
-            if (x > 10 || y >10 || x < 1 || y < 1) {
-                System.out.println("Превышено значение операнда, введите от 1 до 10.");
-                System.exit(1);}
             switch (mass[1]) {
-                case "+":
-                    otvet = "" + (x + y);
-                    break;
-                case "-":
-                    otvet = "" + (x - y);
-                    break;
-                case "*":
-                    otvet = "" + (x * y);
-                    break;
-                case "/":
-                    otvet = "" + (x / y);
-                    break;
+                case "+" -> otvet = "" + (x + y);
+                case "-" -> otvet = "" + (x - y);
+                case "*" -> otvet = "" + (x * y);
+                case "/" -> otvet = "" + (x / y);
+            }
+        if (x > 10 || y >10 || x < 1 || y < 1) {
+            try {
+                throw new IOException();
+            } catch (IOException e) {
+                System.out.println("Не корректное значение операнда, введите от 1 до 10.");
+            System.exit(0);}
             }
             return otvet;
-        } catch (NumberFormatException e) {
-            return "Используются одновременно разные системы исчесления.";
         }
-    }
 }
